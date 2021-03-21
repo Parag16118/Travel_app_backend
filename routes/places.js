@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('./cors');
+// const cors = require('./cors');
 
 const Places = require('../models/places');
 
@@ -11,8 +11,6 @@ places.use(express.json());
 
 
 places.route('/')
-.options(cors.corsWithOptions,async (req, res) => { res.sendStatus(200); })
-.options(cors.cors,(req, res) => { res.sendStatus(200); })
 .get((req,res,next) => {
     Places.find({})
     .then((places) => {

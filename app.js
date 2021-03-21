@@ -3,22 +3,27 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
-
+var mongoose = require('mongoose');
+var dotenv= require('dotenv') 
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var placeRouter = require('./routes/places');
 var findRouter = require('./routes/find-route');
 
-
-var mongoose = require('mongoose');
+dotenv.config();
 
 var app = express();
+
+var cors = require('cors')
+
+app.use(cors()) 
 
 const data=require('./data.json');
 const Deals = require('./models/deals');
 const Places = require('./models/places');
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -29,14 +34,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+
 app.use('/places', placeRouter);
 app.use('/find-route', findRouter);
 
 
 
-const url = "mongodb://127.0.0.1:27017/SnapWiz";
+const mongourl = `${process.env.MONGO_URL}`;
 
 const convertDuration=(h,m)=>{
   let hh=parseInt(h);
@@ -52,33 +56,31 @@ const all_places=(data)=>{
     s.add(item.arrival);
   })
   let a=Array.from(s).sort();
-  console.log(a);
+  
   return a;
 }
 
-const connect = mongoose.connect(url);
+const connect = mongoose.connect(mongourl);
 connect.then((db) => {
     console.log("Connected correctly to server");
 
     var y=0;
-    // data.deals.forEach((item)=>{
-    //   let x=item;
-    //   x.duration=convertDuration(item.duration.h,item.duration.m);
-    //   x.id=y;
-    //   // let p=Deals.find({"reference":x.reference})
-    //   Deals.create(x);
-    //   y+=1;
-    // })
+    data.deals.forEach((item)=>{
+      let x=item;
+      x.duration=convertDuration(item.duration.h,item.duration.m);
+      x.id=y;
+      Deals.create(x);
+      y+=1;
+    })
 
-    // let s=all_places(data);
-    // y=0;
-    // s.forEach((item)=>{
-    //   let x={id:y,name:item};
-    //   Places.create(x);
-    //   y++;
-    // })
+    let s=all_places(data);
+    y=0;
+    s.forEach((item)=>{
+      let x={id:y,name:item};
+      Places.create(x);
+      y++;
+    })
 
-    // console.log(data.deals.length)
 }, (err) => { console.log(err); });
 
 

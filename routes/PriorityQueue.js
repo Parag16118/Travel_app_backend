@@ -7,7 +7,7 @@ class QElement {
 } 
 
 // PriorityQueue class 
-export default class PriorityQueue { 
+module.exports = class PriorityQueue { 
 
 	// An array is used to implement priority 
 	constructor() 
@@ -84,4 +84,4 @@ export default class PriorityQueue {
     } 
 
 
-}
+} 

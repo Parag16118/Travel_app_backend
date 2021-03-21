@@ -56,7 +56,6 @@ const all_places=(data)=>{
     s.add(item.arrival);
   })
   let a=Array.from(s).sort();
-  
   return a;
 }
 
@@ -82,7 +81,6 @@ connect.then((db) => {
     })
 
 }, (err) => { console.log(err); });
-
 
 
 
